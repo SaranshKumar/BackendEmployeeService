@@ -1,5 +1,10 @@
 package com.employee.h2.api.service;
 
+import java.util.HashMap;
+
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +18,7 @@ public class EmployeeService {
 	private EmployeeRepository repository;
 	
 	public void addEmployeeService(EmployeeEntity employee) {
+
 		Employee emp=new Employee();
 		
 		emp.setEmpId(employee.getEmpId());
@@ -43,7 +49,23 @@ public class EmployeeService {
 	}
 	
 	public Iterable<Employee> showEmployeeService(){
+		
 		return repository.findAll();
 	}
+	
+	public Iterable<Employee> findByEmployeeId(Integer id) {
 
+		Map<Integer, Employee> empMap = new HashMap<Integer, Employee>(); 
+		Iterable<Employee> allEmp=repository.findAll();
+		allEmp.forEach(emp->empMap.put(emp.getEmpId(), emp));
+
+	    Map<Integer, Employee> result = empMap.entrySet() 
+	          .stream() 
+	          .filter(map -> map.getKey().intValue() == id) 
+	          .collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue()));  
+	  
+	    return result.values();
+		
+		
+	}
 }
